@@ -1,33 +1,64 @@
-import notesData from "../data/notesData.js";
+// import notesData from "../data/notesData.js";
 
 class NotesGrid extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this.notes = notesData;
+    // this.notes = notesData;
   }
 
   connectedCallback() {
-    this.renderNotes();
+    this.loadNotes()
+      .then((response) => {
+        if (response.error) {
+          this.showErrorMessage(response.error);
+        } else {
+          this.renderNotes(response.data);
+        }
+      })
+      .catch((error) => {
+        this._showErrorMessage(error);
+      });
     this.formListen();
   }
+  showErrorMessage(error) {
+    this._shadowRoot.innerHTML = `<p>${error}</p>`;
+  }
 
-  renderNotes() {
+  loadNotes() {
+    return fetch("https://notes-api.dicoding.dev/v2/notes")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to load data from API");
+        }
+        return response.json();
+      })
+      .catch(error => {
+        throw new Error("Error while requesting data from API");
+      });
+  }
+  
+
+  renderNotes(data) {
     const notesContainer = document.createElement("div");
     notesContainer.id = "notes-container";
-
-    this.notes.forEach((note) => {
-      const noteElement = document.createElement("div");
-      noteElement.innerHTML = `
-                <div class="note-content">
-                    <h2>${note.title}</h2>
-                    <p>${note.body}</p>
-                    <p>Created at: ${note.createdAt}</p>
-                    <p>Archived: ${note.archived}</p>
-                </div>
-            `;
-      notesContainer.appendChild(noteElement);
-    });
+    if (data && Array.isArray(data)){
+      data.forEach((note) => {
+        const noteElement = document.createElement("div");
+        noteElement.innerHTML = `
+                  <div class="note-content">
+                      <h2>${note.title}</h2>
+                      <p>${note.body}</p>
+                      <p>Created at: ${note.createdAt}</p>
+                      <p>Archived: ${note.archived}</p>
+                  </div>
+              `;
+        notesContainer.appendChild(noteElement);
+      });
+    }else {
+      console.error("Data is not an array");
+    }
+    
 
     const style = document.createElement("style");
     style.textContent = `
