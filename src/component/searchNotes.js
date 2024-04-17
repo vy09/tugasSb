@@ -1,4 +1,4 @@
-import notesData from "./notesData.js";
+import notesData from "../data/notesData";
 
 class SearchNotes extends HTMLElement {
   constructor() {
