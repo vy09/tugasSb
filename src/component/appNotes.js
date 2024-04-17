@@ -1,3 +1,4 @@
-import "./notes.js";
-import "./searchNotes.js";
+import "./formNotes.js";
+import "../data/notesData.js";
+import "./mainNotes.js";
 import "./notesGrid.js";
