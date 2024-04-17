@@ -1,4 +1,5 @@
 // import notesData from "../data/notesData.js";
+import { insertNotes } from "./mainNotes.js";
 
 class NotesGrid extends HTMLElement {
   constructor() {
@@ -84,33 +85,14 @@ class NotesGrid extends HTMLElement {
     this.shadowRoot.appendChild(notesContainer);
   }
 
-  addNote(title, body) {
-    const newNote = {
-      title,
-      body,
-      createdAt: new Date().toISOString(),
-      archived: false,
-    };
-    this.notes.push(newNote);
-    const notesContainer = this.shadowRoot.getElementById("notes-container");
-    const noteElement = document.createElement("div");
-    noteElement.innerHTML = `
-            <div class="note-content">
-                <h2>${newNote.title}</h2>
-                <p>${newNote.body}</p>
-                <p>Created at: ${newNote.createdAt}</p>
-                <p>Archived: ${newNote.archived}</p>
-            </div>
-        `;
-    notesContainer.appendChild(noteElement);
-  }
-
   formListen() {
     document.addEventListener("newNoteAdded", (event) => {
       const { title, body } = event.detail;
-      this.addNote(title, body);
+      const data = { title, body };
+      insertNotes(data);
     });
   }
 }
 
 customElements.define("notes-grid", NotesGrid);
+export {NotesGrid};
