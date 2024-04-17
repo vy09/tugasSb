@@ -1,5 +1,3 @@
-import { NotesGrid } from "./notesGrid.js";
-
 export const insertNotes = (data) => {
     const options = {
       method: "POST",
@@ -13,6 +11,27 @@ export const insertNotes = (data) => {
       .then(response => {
         if (!response.ok) {
           throw new Error("Failed to insert notes");
+        }
+        const notesGrid = document.querySelector("notes-grid");
+        if (notesGrid) {
+          notesGrid.loadNotes();
+          window.location.reload();
+        }
+      })
+      .catch(error => {
+        showResponseMessage(error.message);
+      });
+  };
+
+  export const removeNote = (noteId) => {
+    const options = {
+      method: "DELETE",
+    };
+  
+    fetch(`https://notes-api.dicoding.dev/v2/notes/${noteId}`, options)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to remove note");
         }
         const notesGrid = document.querySelector("notes-grid");
         if (notesGrid) {

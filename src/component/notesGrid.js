@@ -1,5 +1,6 @@
 // import notesData from "../data/notesData.js";
 import { insertNotes } from "./mainNotes.js";
+import { removeNote } from "./mainNotes.js";
 
 class NotesGrid extends HTMLElement {
   constructor() {
@@ -18,12 +19,12 @@ class NotesGrid extends HTMLElement {
         }
       })
       .catch((error) => {
-        this._showErrorMessage(error);
+        this.showErrorMessage(error);
       });
     this.formListen();
   }
   showErrorMessage(error) {
-    this._shadowRoot.innerHTML = `<p>${error}</p>`;
+    this.shadowRoot.innerHTML = `<p>${error}</p>`;
   }
 
   loadNotes() {
@@ -52,8 +53,13 @@ class NotesGrid extends HTMLElement {
                       <p>${note.body}</p>
                       <p>Created at: ${note.createdAt}</p>
                       <p>Archived: ${note.archived}</p>
+                      <button class="hapus" style="background-color: red " id="${note.id}">Hapus</button>
                   </div>
               `;
+             const remove = noteElement.querySelector(".hapus");
+             remove.addEventListener("click", () => {
+              removeNote(note.id);
+            });
         notesContainer.appendChild(noteElement);
       });
     }else {
@@ -78,6 +84,14 @@ class NotesGrid extends HTMLElement {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             box-sizing: border-box;
+        }
+        button{
+          border: 0;
+          padding: 10px;
+          margin: 0 5px 0 0;
+          border-radius: 5px;
+          cursor: pointer;
+          color: white;
         }
         `;
 
